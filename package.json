@@ -1,0 +1,17 @@
+{
+  "name": "couch-promised",
+  "version": "0.1.0",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "lint": "eslint {src,test}/*.es6; true",
+    "test": "mocha test/ -R spec --recursive --compilers es6:babel/register"
+  },
+  "main": "lib/couch-promised.js",
+  "devDependencies": {
+    "babel": "^5.1.10",
+    "babel-eslint": "^3.0.1",
+    "chai": "^1.10.0",
+    "eslint": "^0.15.1",
+    "mocha": "^2.0.1"
+  }
+}
