@@ -7,11 +7,16 @@
     "test": "mocha test/ -R spec --recursive --compilers es6:babel/register"
   },
   "main": "lib/couch-promised.js",
+  "dependencies": {
+    "core-js": "^0.8.4"
+  },
   "devDependencies": {
     "babel": "^5.1.10",
     "babel-eslint": "^3.0.1",
-    "chai": "^1.10.0",
+    "chai": "^2.1.2",
+    "chai-as-promised": "^5.0.0",
     "eslint": "^0.15.1",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "nock": "^1.6.0"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "handle-callback-err": 0
+  },
+  "globals": {
+    "beforeEach": false,
+    "describe": false,
+    "it": false
+  }
+}
