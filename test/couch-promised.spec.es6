@@ -7,6 +7,8 @@ import Couch from '../src/couch-promised';
 chai.use(chaiAsPromised);
 let expect = chai.expect;
 
+const DB_URL = 'http://127.0.0.1:5984';
+
 describe('CouchPromised', () => {
 
   let couch;
@@ -49,6 +51,24 @@ describe('CouchPromised', () => {
       nock('http://127.0.0.1:5984').get('/test-db/1').replyWithError(response);
       let promise = couch.request('get', '/1');
       return expect(promise).to.be.rejectedWith(Error, 'fail');
+    });
+  });
+
+  describe('#createDB', () => {
+
+    it('should make a PUT request to the configured path', () => {
+      let response = { ok: true };
+      nock(DB_URL).put('/test-db', {}).reply(201, response);
+      return expect(couch.createDB()).to.eventually.become(response);
+    });
+  });
+
+  describe('#deleteDB', () => {
+
+    it('should make a DELETE request to the configured path', () => {
+      let response = { ok: true };
+      nock(DB_URL).delete('/test-db', {}).reply(200, response);
+      return expect(couch.deleteDB()).to.eventually.become(response);
     });
   });
 });

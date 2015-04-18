@@ -21,6 +21,18 @@ export default class CouchPromised {
     }
   }
 
+  // Create the database at the path specified when the instance was created.
+  // Databases in CouchDB are created by performing a simple PUT request to a
+  // non-existent database.
+  createDB() {
+    return this.request('PUT', '');
+  }
+
+  // Delete the database at the path specified when the instance was created.
+  deleteDB() {
+    return this.request('DELETE', '');
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the
