@@ -62,12 +62,6 @@ export default class CouchPromised {
       method,
     };
 
-    // The body parameter is optional. If a value was provided for it we add a
-    // serialized copy of it to the request options.
-    if ( body ) {
-      options.body = JSON.stringify(body);
-    }
-
     // Make an HTTP request to the CouchDB server and return a promise for a
     // response. The promise will be rejected with any error from the database
     // or will be resolved with all response data once the connection closes.
@@ -89,6 +83,12 @@ export default class CouchPromised {
       request.on('error', ( err ) => {
         reject(err);
       });
+
+      // If we need to send data to the server we write a serialized copy of it
+      // to the request body now.
+      if ( body ) {
+        request.write(JSON.stringify(body));
+      }
 
       // All relevant event handlers have been registered so it's now safe to
       // send the request.
