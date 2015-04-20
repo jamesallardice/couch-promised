@@ -33,6 +33,33 @@ export default class CouchPromised {
     return this.request('DELETE', '');
   }
 
+  // Get an individual document by its unique identifier.
+  get( id ) {
+    return this.request('GET', `/${ id }`);
+  }
+
+  // Get multiple documents by their unique identifiers. If the first parameter
+  // is an array it's treated as an array of identifiers. If it's anything else
+  // we assume the identifiers have been provided as individual parameters.
+  fetch( ids ) {
+
+    if ( !Array.isArray(ids) ) {
+      ids = Array.from(arguments);
+    }
+
+    return this.request('POST', '/_all_docs?include_docs=true', {
+      keys: ids,
+    })
+    .then(( response ) => response.rows.map(( row, i ) => {
+
+      if ( row.error || !row.doc ) {
+        throw new Error(`Document with ID ${ ids[ i ] } not found.`);
+      }
+
+      return row.doc;
+    }));
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the

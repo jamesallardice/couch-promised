@@ -71,4 +71,64 @@ describe('CouchPromised', () => {
       return expect(couch.deleteDB()).to.eventually.become(response);
     });
   });
+
+  describe('#get', () => {
+
+    it('should make a GET request to the specified path', () => {
+      let response = { _id: 2 };
+      nock(DB_URL).get('/test-db/2').reply(200, response);
+      return expect(couch.get('2')).to.eventually.become(response);
+    });
+  });
+
+  describe('#fetch', () => {
+
+    it('should make a POST request to the specified path', () => {
+
+      let response = {
+        rows: [
+          { id: '3', key: '3', doc: { _id: 3 } },
+          { id: '4', key: '4', doc: { _id: 4 } },
+        ],
+      };
+
+      nock(DB_URL).post('/test-db/_all_docs?include_docs=true')
+      .reply(200, response);
+
+      return expect(couch.fetch([ '3', '4' ]))
+      .to.eventually.become([ { _id: 3 }, { _id: 4 } ]);
+    });
+
+    it('should convert an arguments list into an array', () => {
+
+      let response = {
+        rows: [
+          { id: '5', key: '5', doc: { _id: 5 } },
+          { id: '6', key: '6', doc: { _id: 6 } },
+        ],
+      };
+
+      nock(DB_URL).post('/test-db/_all_docs?include_docs=true')
+      .reply(200, response);
+
+      return expect(couch.fetch('5', '6'))
+      .to.eventually.become([ { _id: 5 }, { _id: 6 } ]);
+    });
+
+    it('should throw an error if a document is not found', () => {
+
+      let response = {
+        rows: [
+          { id: '5', key: '7', doc: { _id: 5 } },
+          { key: 'missing', error: 'not_found' },
+        ],
+      };
+
+      nock(DB_URL).post('/test-db/_all_docs?include_docs=true')
+      .reply(200, response);
+
+      return expect(couch.fetch('7', '8'))
+      .to.be.rejectedWith(Error, /not found/);
+    });
+  });
 });
