@@ -2,7 +2,7 @@
   "name": "couch-promised",
   "version": "0.1.0",
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel -sd lib/ src/",
     "lint": "eslint {src,test}/*.es6; true",
     "test": "mocha test/ -R spec --recursive --compilers es6:babel/register"
   },
