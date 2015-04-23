@@ -196,4 +196,18 @@ describe('CouchPromised', () => {
       .to.eventually.become({ _id: 'to-delete', _rev: 2 });
     });
   });
+
+  describe('#view', () => {
+
+    it('should make a GET request to a given view', () => {
+
+      let rows = [ { id: 1, key: [ 2, 3 ], value: null } ];
+
+      nock(DB_URL).get('/test-db/_design/d/_view/v')
+      .reply(200, { rows });
+
+      return expect(couch.view('d', 'v'))
+      .to.eventually.become(rows);
+    });
+  });
 });

@@ -104,6 +104,22 @@ export default class CouchPromised {
     return this.request('DELETE', `/${ doc._id }?rev=${ doc._rev }`, doc);
   }
 
+  // Query a database view. Accepts all parameters that a CouchDB can receive.
+  view( design, view, params ) {
+
+    let qs = '';
+
+    // If we have any view parameters we need to build up a URI-encoded query
+    // string. At the moment all query parameters are sent as part of the query
+    // string instead of as part of a POST request body.
+    if ( typeof params === 'object' ) {
+      qs = buildQueryString(params);
+    }
+
+    return this.request('GET', `/_design/${ design }/_view/${ view }${ qs }`)
+    .then(( res ) => res.rows);
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the
@@ -182,4 +198,15 @@ function validateDocument( doc ) {
   }
 
   return true;
+}
+
+// Build a URI-encoded query string from a normal object. Serializes the object
+// to JSON first.
+function buildQueryString( obj ) {
+
+  return Object.keys(obj).reduce(( qs, key, i ) => {
+
+    let json = JSON.stringify(obj[ key ]);
+    return `${ qs }${ i ? '&' : '?' }${ key }=${ encodeURIComponent(json) }`;
+  }, '');
 }
