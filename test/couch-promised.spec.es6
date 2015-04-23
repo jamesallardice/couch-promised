@@ -42,14 +42,14 @@ describe('CouchPromised', () => {
 
     it('should resolve to the server response on success', () => {
       let response = { done: true };
-      nock('http://127.0.0.1:5984').get('/test-db/1').reply(200, response);
-      return expect(couch.request('get', '/1')).to.eventually.become(response);
+      nock('http://127.0.0.1:5984').get('/test-db/pass').reply(200, response);
+      return expect(couch.request('get', '/pass')).to.eventually.become(response);
     });
 
     it('should reject with the server error on error', () => {
       let response = new Error('fail');
-      nock('http://127.0.0.1:5984').get('/test-db/1').replyWithError(response);
-      let promise = couch.request('get', '/1');
+      nock('http://127.0.0.1:5984').get('/test-db/fail').replyWithError(response);
+      let promise = couch.request('get', '/fail');
       return expect(promise).to.be.rejectedWith(Error, 'fail');
     });
   });
@@ -129,6 +129,27 @@ describe('CouchPromised', () => {
 
       return expect(couch.fetch('7', '8'))
       .to.be.rejectedWith(Error, /not found/);
+    });
+  });
+
+  describe('#insert', () => {
+
+    it('should make a POST request when given data with no ID', () => {
+
+      nock(DB_URL).post('/test-db')
+      .reply(201, { id: 123, rev: 1 });
+
+      return expect(couch.insert({ name: 'test' }))
+      .to.eventually.become({ _id: 123, _rev: 1 });
+    });
+
+    it('should make a PUT request when given data with an ID', () => {
+
+      nock(DB_URL).put('/test-db/123')
+      .reply(201, { id: 123, rev: 1 });
+
+      return expect(couch.insert({ _id: 123, name: 'test' }))
+      .to.eventually.become({ _id: 123, _rev: 1 });
     });
   });
 });

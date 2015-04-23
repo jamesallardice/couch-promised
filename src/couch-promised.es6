@@ -60,6 +60,34 @@ export default class CouchPromised {
     }));
   }
 
+  // Insert a new document. This will also allow for updating an existing
+  // document if a revision is present on the parameter object. If an ID is
+  // present a PUT request is made to that ID. If not, a POST is made to the
+  // main database URL.
+  insert( doc ) {
+
+    let path = doc._id;
+    let promise;
+
+    if ( path ) {
+      promise = this.request('PUT', `/${ path }`, doc);
+    } else {
+      promise = this.request('POST', '', doc);
+    }
+
+    return promise
+    .then(( res ) => {
+
+      // Normalize the response data. When retrieving documents the identifier
+      // and revision properties are always prefixed with an underscore so we
+      // make that consistent here.
+      return {
+        _id: res.id,
+        _rev: res.rev,
+      };
+    });
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the
