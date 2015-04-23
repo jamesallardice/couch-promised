@@ -174,4 +174,26 @@ describe('CouchPromised', () => {
       .to.eventually.become({ _id: 'to-update', _rev: 2 });
     });
   });
+
+  describe('#delete', () => {
+
+    it('should throw an error if given a document with no ID', () => {
+      let test = () => couch.delete({});
+      expect(test).to.throw(Error, /_id property/);
+    });
+
+    it('should throw an error if given a document with no revision', () => {
+      let test = () => couch.delete({ _id: 1 });
+      expect(test).to.throw(Error, /_rev property/);
+    });
+
+    it('should make a DELETE request when given a valid document', () => {
+
+      nock(DB_URL).put('/test-db/to-delete')
+      .reply(201, { id: 'to-delete', rev: 2 });
+
+      return expect(couch.update({ _id: 'to-delete', _rev: 1 }))
+      .to.eventually.become({ _id: 'to-delete', _rev: 2 });
+    });
+  });
 });

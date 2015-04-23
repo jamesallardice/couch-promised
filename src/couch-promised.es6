@@ -93,15 +93,15 @@ export default class CouchPromised {
   // in the database.
   update( doc ) {
 
-    if ( !doc.hasOwnProperty('_id') ) {
-      throw new Error('An _id property is required to update a document.');
-    }
-
-    if ( !doc.hasOwnProperty('_rev') ) {
-      throw new Error('A _rev property is required to update a document.');
-    }
-
+    validateDocument(doc);
     return this.insert(doc);
+  }
+
+  // Delete an existing document.
+  delete( doc ) {
+
+    validateDocument(doc);
+    return this.request('DELETE', `/${ doc._id }?rev=${ doc._rev }`, doc);
   }
 
   // The base request method. Most of the other methods are sugar around this.
@@ -166,4 +166,20 @@ export default class CouchPromised {
       request.end();
     });
   }
+}
+
+// Ensure a document has an _id property and a _rev property. This should be
+// the case for any existing document and both properties must be present for
+// any operations that modify a document.
+function validateDocument( doc ) {
+
+  if ( !doc.hasOwnProperty('_id') ) {
+    throw new Error('An _id property is required to modify a document.');
+  }
+
+  if ( !doc.hasOwnProperty('_rev') ) {
+    throw new Error('A _rev property is required to modify a document.');
+  }
+
+  return true;
 }
