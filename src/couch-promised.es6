@@ -88,6 +88,22 @@ export default class CouchPromised {
     });
   }
 
+  // Update an existing document. Existing documents will always have an _id
+  // property. Requires that the value of the _rev property match that stored
+  // in the database.
+  update( doc ) {
+
+    if ( !doc.hasOwnProperty('_id') ) {
+      throw new Error('An _id property is required to update a document.');
+    }
+
+    if ( !doc.hasOwnProperty('_rev') ) {
+      throw new Error('A _rev property is required to update a document.');
+    }
+
+    return this.insert(doc);
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the

@@ -152,4 +152,26 @@ describe('CouchPromised', () => {
       .to.eventually.become({ _id: 123, _rev: 1 });
     });
   });
+
+  describe('#update', () => {
+
+    it('should throw an error if given a document with no ID', () => {
+      let test = () => couch.update({});
+      expect(test).to.throw(Error, /_id property/);
+    });
+
+    it('should throw an error if given a document with no revision', () => {
+      let test = () => couch.update({ _id: 1 });
+      expect(test).to.throw(Error, /_rev property/);
+    });
+
+    it('should make a PUT request when given a valid document', () => {
+
+      nock(DB_URL).put('/test-db/to-update')
+      .reply(201, { id: 'to-update', rev: 2 });
+
+      return expect(couch.update({ _id: 'to-update', _rev: 1 }))
+      .to.eventually.become({ _id: 'to-update', _rev: 2 });
+    });
+  });
 });
