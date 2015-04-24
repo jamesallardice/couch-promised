@@ -98,10 +98,17 @@ export default class CouchPromised {
   }
 
   // Delete an existing document.
-  delete( doc ) {
+  destroy( doc ) {
 
     validateDocument(doc);
-    return this.request('DELETE', `/${ doc._id }?rev=${ doc._rev }`, doc);
+    return this.request('DELETE', `/${ doc._id }?rev=${ doc._rev }`, doc)
+    .then(( res ) => {
+
+      return {
+        _id: res.id,
+        _rev: res.rev,
+      };
+    });
   }
 
   // Query a database view. Accepts all parameters that a CouchDB can receive.
