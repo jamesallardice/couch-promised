@@ -127,6 +127,19 @@ export default class CouchPromised {
     .then(( res ) => res.rows);
   }
 
+  // Query a database view and return the associated documents rather than the
+  // result rows. Effectively just sugar around a CouchPromised#view => map.
+  viewDocs( design, view, params = {} ) {
+
+    // The 'reduce' parameter cannot be set when the 'include_docs' parameter
+    // is set.
+    params.reduce = false;
+    params.include_docs = true;
+
+    return this.view(design, view, params)
+    .then(( rows ) => rows.map(( row ) => row.doc));
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the

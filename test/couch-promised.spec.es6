@@ -210,4 +210,31 @@ describe('CouchPromised', () => {
       .to.eventually.become(rows);
     });
   });
+
+  describe('#viewDocs', () => {
+
+    it('should make a GET request to a given view', () => {
+
+      let rows = [ { id: 1, key: [ 2, 3 ], doc: { _id: 7 } } ];
+
+      nock(DB_URL).get('/test-db/_design/d/_view/v?reduce=false&include_docs=true')
+      .reply(200, { rows });
+
+      return expect(couch.viewDocs('d', 'v'))
+      .to.eventually.become([ { _id: 7 } ]);
+    });
+
+    it('should always set "reduce" to false', () => {
+
+      let rows = [ { id: 1, key: [ 2, 3 ], doc: { _id: 8 } } ];
+
+      nock(DB_URL).get('/test-db/_design/d/_view/v?reduce=false&include_docs=true')
+      .reply(200, { rows });
+
+      return expect(couch.viewDocs('d', 'v', {
+        reduce: true,
+      }))
+      .to.eventually.become([ { _id: 8 } ]);
+    });
+  });
 });
