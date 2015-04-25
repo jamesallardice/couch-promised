@@ -120,6 +120,22 @@ export default class CouchPromised {
     // string. At the moment all query parameters are sent as part of the query
     // string instead of as part of a POST request body.
     if ( typeof params === 'object' ) {
+
+      // The rootKey parameter is a custom extension that makes it easier to
+      // find a range of documents from a view. It expands out into:
+      //
+      //   startkey=[ rootKey[ 0 ] ]&endkey=[ rootKey[ 0 ], {} ]
+      //
+      let rootKey = params.rootKey;
+
+      if ( rootKey ) {
+
+        params.startkey = rootKey;
+        params.endkey = rootKey.concat({});
+        delete params.rootKey;
+      }
+
+      // Build a URL query string from the final set of parameters.
       qs = buildQueryString(params);
     }
 
