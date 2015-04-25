@@ -1,6 +1,6 @@
 {
   "name": "couch-promised",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "compile": "babel -sd lib/ src/",
     "lint": "eslint {src,test}/*.es6; true",
