@@ -237,4 +237,25 @@ describe('CouchPromised', () => {
       .to.eventually.become([ { _id: 8 } ]);
     });
   });
+
+  describe('#bulk', () => {
+
+    it('should make a POST request to /_bulk_docs', () => {
+
+      nock(DB_URL).post('/test-db/_bulk_docs')
+      .reply(201, [ { id: 1, rev: 2, }, ]);
+
+      return expect(couch.bulk([ { _id: 1, _rev: 1, }, ]))
+      .to.eventually.become([ { _id: 1, _rev: 2, }, ]);
+    });
+
+    it('should throw an error if any errors are returned', () => {
+
+      nock(DB_URL).post('/test-db/_bulk_docs')
+      .reply(201, [ { id: 1, rev: 1, error: 'conflict', }, ]);
+
+      return expect(couch.bulk([ { _id: 1, _rev: 2, }, ]))
+      .to.eventually.be.rejectedWith(Error, /Bulk/);
+    });
+  });
 });

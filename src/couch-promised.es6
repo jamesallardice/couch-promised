@@ -140,6 +140,33 @@ export default class CouchPromised {
     .then(( rows ) => rows.map(( row ) => row.doc));
   }
 
+  // Perform a bulk insert/update of documents.
+  bulk( docs ) {
+
+    return this.request('POST', '/_bulk_docs', {
+      docs,
+    })
+    .then(( res ) => {
+
+      let errors = res.filter(( item ) => item.error);
+
+      if ( errors.length ) {
+        let error = new Error();
+        error.message = 'Bulk Errors';
+        error.itemErrors = errors;
+        error.requestBody = docs;
+        throw error;
+      }
+
+      return res.map(( item ) => {
+        return {
+          _id: item.id,
+          _rev: item.rev,
+        };
+      });
+    });
+  }
+
   // The base request method. Most of the other methods are sugar around this.
   // Requires an HTTP method and a URL path which will be appended to the
   // instance-wide database URL. Optionally also takes a request body in the
