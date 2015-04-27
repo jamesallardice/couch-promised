@@ -59,6 +59,7 @@ couch.fetch('my-doc-id-1', 'my-doc-id-2').then(function ( docs ) {
   // 'docs' will be an array of objects corresponding the the latest revisions
   // of the stored documents.
 });
+```
 
 #### `insert( doc )`
 
@@ -141,8 +142,9 @@ couch.bulk([ { x: 1 }, { y: 2 } ]).then(function ( res ) {
   // 'res' will be an array of objects with '_id' and '_rev' properties
   // corresponding to the inserted or updated document.
 });
+```
 
-#### `request( method , path [, body ] )
+#### `request( method , path [, body ] )`
 
 Send an HTTP request to the CouchDB database. Requires an HTTP method and a URL
 path. Optionally also takes an object representing the request body.
@@ -153,3 +155,4 @@ couch.request('GET', '/my-doc-id').then(function ( res ) {
   // The other CouchPromised methods take that response and resolve with the
   // relevant data from within it.
 });
+```
