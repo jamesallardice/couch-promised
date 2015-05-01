@@ -201,31 +201,39 @@ describe('CouchPromised', () => {
 
     it('should make a GET request to a given view', () => {
 
-      let rows = [ { id: 1, key: [ 2, 3 ], value: null } ];
+      let response = {
+        rows: [ { id: 1, key: [ 2, 3 ], value: null } ],
+        total_rows: 1,
+        offset: 0,
+      };
 
       nock(DB_URL).get('/test-db/_design/d/_view/v')
-      .reply(200, { rows });
+      .reply(200, response);
 
       return expect(couch.view('d', 'v'))
-      .to.eventually.become(rows);
+      .to.eventually.become(response);
     });
 
     it('should expand a rootKey parameter into start and end keys', () => {
 
       let start = encodeURIComponent('[2]');
       let end = encodeURIComponent('[2,{}]');
-      let rows = [
-        { id: 1, key: [ 2, 3 ], value: null, },
-        { id: 2, key: [ 2, 4 ], value: null, },
-      ];
+      let response = {
+        rows: [
+          { id: 1, key: [ 2, 3 ], value: null, },
+          { id: 2, key: [ 2, 4 ], value: null, },
+        ],
+        total_rows: 2,
+        offset: 0,
+      }
 
       nock(DB_URL).get(`/test-db/_design/d/_view/v?startkey=${ start }&endkey=${ end }`)
-      .reply(200, { rows });
+      .reply(200, response);
 
       return expect(couch.view('d', 'v', {
         rootKey: [ 2 ],
       }))
-      .to.eventually.become(rows);
+      .to.eventually.become(response);
     });
   });
 

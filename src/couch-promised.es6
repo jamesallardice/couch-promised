@@ -139,8 +139,7 @@ export default class CouchPromised {
       qs = buildQueryString(params);
     }
 
-    return this.request('GET', `/_design/${ design }/_view/${ view }${ qs }`)
-    .then(( res ) => res.rows);
+    return this.request('GET', `/_design/${ design }/_view/${ view }${ qs }`);
   }
 
   // Query a database view and return the associated documents rather than the
@@ -153,7 +152,7 @@ export default class CouchPromised {
     params.include_docs = true;
 
     return this.view(design, view, params)
-    .then(( rows ) => rows.map(( row ) => row.doc));
+    .then(( res ) => res.rows.map(( row ) => row.doc));
   }
 
   // Perform a bulk insert/update of documents.
